@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="ru.mirea.rudenok.mireaproject.ui.Python.HomeFragment"
+        android:label="Python"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_gallery"
+        android:name="ru.mirea.rudenok.mireaproject.ui.Browser.GalleryFragment"
+        android:label="Браузер"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/nav_playerFragment"
+        android:name="ru.mirea.rudenok.mireaproject.PlayerFragment"
+        android:label="Плеер"
+        tools:layout="@layout/fragment_player" />
+
+    <fragment
+        android:id="@+id/nav_cameraFragment"
+        android:name="ru.mirea.rudenok.mireaproject.CameraFragment"
+        android:label="Камера"
+        tools:layout="@layout/fragment_camera" />
+
+    <fragment
+        android:id="@+id/nav_audioFragment"
+        android:name="ru.mirea.rudenok.mireaproject.AudioFragment"
+        android:label="Аудио"
+        tools:layout="@layout/fragment_audio" />
+    <fragment
+        android:id="@+id/nav_profileFragment"
+        android:name="ru.mirea.rudenok.mireaproject.ProfileFragment"
+        android:label="Профиль"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/nav_weatherFragment"
+        android:name="ru.mirea.rudenok.mireaproject.WeatherFragment"
+        android:label="Погодные данные"
+        tools:layout="@layout/fragment_weather" />
+    <fragment
+        android:id="@+id/nav_fileFragment"
+        android:name="ru.mirea.rudenok.mireaproject.FileFragment"
+        android:label="Работа с файлом"
+        tools:layout="@layout/fragment_file" />
+    <fragment
+        android:id="@+id/nav_fabDialogFragment"
+        android:name="ru.mirea.rudenok.mireaproject.FabDialogFragment"
+        android:label="Работа с файлом"
+        tools:layout="@layout/fragment_fab_dialog" />
+    <fragment
+        android:id="@+id/nav_placesFragment"
+        android:name="ru.mirea.rudenok.mireaproject.PlacesFragment"
+        android:label="Заведения"
+        tools:layout="@layout/fragment_places" />
+    <fragment
+        android:id="@+id/nav_sensorFragment"
+        android:name="ru.mirea.rudenok.mireaproject.SensorFragment"
+        android:label="Работа с датчиком"
+        tools:layout="@layout/fragment_sensor" />
+
+</navigation>

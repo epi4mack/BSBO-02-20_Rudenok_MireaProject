@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Python"
+            android:icon="@drawable/python"/>
+        <item
+            android:id="@+id/nav_gallery"
+            android:title="Browser"
+            android:icon="@drawable/web"/>
+        <item
+            android:id="@+id/nav_playerFragment"
+            android:title="Player"
+            android:icon="@drawable/playbutton"/>
+        <item
+            android:id="@+id/nav_cameraFragment"
+            android:title="Camera"
+            android:icon="@drawable/ic_menu_camera"/>
+        <item
+            android:id="@+id/nav_audioFragment"
+            android:title="Audio"
+            android:icon="@drawable/microphone"/>
+        <item
+            android:id="@+id/nav_profileFragment"
+            android:title="Profile"
+            android:icon="@drawable/account"/>
+        <item
+            android:id="@+id/nav_fileFragment"
+            android:title="Files"
+            android:icon="@drawable/document"/>
+        <item
+            android:id="@+id/nav_weatherFragment"
+            android:title="Weather"
+            android:icon="@drawable/weather"/>
+        <item
+            android:id="@+id/nav_placesFragment"
+            android:title="Establishments"
+            android:icon="@drawable/restaurant"/>
+        <item
+            android:id="@+id/nav_sensorFragment"
+            android:title="Sensor"
+            android:icon="@drawable/lightbulb"/>
+    </group>
+</menu>
