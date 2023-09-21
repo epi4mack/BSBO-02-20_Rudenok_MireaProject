@@ -72,4 +72,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignIn" />
+
+    <TextView
+        android:id="@+id/IDview"
+        android:layout_width="244dp"
+        android:layout_height="115dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="49dp"
+        android:layout_marginEnd="138dp"
+        android:layout_marginBottom="105dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUp"
+        app:layout_constraintVertical_bias="0.833" />
 </androidx.constraintlayout.widget.ConstraintLayout>
