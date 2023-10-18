@@ -65,4 +65,10 @@
         android:label="Работа с датчиком"
         tools:layout="@layout/fragment_sensor" />
 
+    <fragment
+        android:id="@+id/nav_installedapps"
+        android:name="ru.mirea.rudenok.mireaproject.InstalledAppsFragment"
+        android:label="Список приложений"
+        tools:layout="@layout/fragment_installed_apps" />
+
 </navigation>

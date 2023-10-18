@@ -44,5 +44,9 @@
             android:id="@+id/nav_sensorFragment"
             android:title="Sensor"
             android:icon="@drawable/lightbulb"/>
+        <item
+            android:id="@+id/nav_installedapps"
+            android:title="Installed Apps"
+            android:icon="@drawable/app_icon"/>
     </group>
 </menu>
