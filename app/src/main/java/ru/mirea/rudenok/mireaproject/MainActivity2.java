@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -20,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
 import java.util.Objects;
 
 import ru.mirea.rudenok.mireaproject.databinding.ActivityMain2Binding;
@@ -33,6 +36,7 @@ public class MainActivity2 extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMain2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
@@ -50,14 +54,52 @@ public class MainActivity2 extends AppCompatActivity {
                 createAccount(binding.EmailAuth.getText().toString(), binding.PasswordAuth.getText().toString());
             }
         });
+    }
 
+    private boolean checkForRemote() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Предупреждение");
+        builder.setMessage("Обнаруженное на устройстве приложение AnyDesk может использоваться хакерами для кражи данных. Продолжить?");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Продолжить", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Выйти", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finishAffinity();
+                System.exit(0);
+            }
+        });
+
+        List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
+
+        for (int i = 0; i < packs.size(); i++) {
+            PackageInfo p = packs.get(i);
+            if(Objects.equals(p.packageName, "com.anydesk.anydeskandroid"))
+            {
+                AlertDialog alert = builder.create();
+                alert.show();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+
+        if(!checkForRemote()){
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            updateUI(currentUser);
+        }
 
         String ID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
