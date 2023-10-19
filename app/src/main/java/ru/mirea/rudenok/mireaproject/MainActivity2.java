@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -37,6 +36,14 @@ public class MainActivity2 extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        if (checkForRAS())
+//        {
+//            Toast.makeText(getApplicationContext(), "Обнаружен AnyDesk", Toast.LENGTH_SHORT).show();
+//            finishAffinity();
+//            System.exit(0);
+//        } lab2
+
+
         binding = ActivityMain2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
@@ -48,6 +55,20 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
+        boolean auto_fill = true;
+        boolean auto_auth = true;
+
+        if (auto_fill)
+        {
+            binding.EmailAuth.setText("test@test.ru");
+            binding.PasswordAuth.setText("123456");
+
+            if (auto_auth)
+            {
+                binding.SignIn.performClick();
+            }
+        } // auth options
+
         binding.SignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,36 +77,13 @@ public class MainActivity2 extends AppCompatActivity {
         });
     }
 
-    private boolean checkForRemote() {
+    private boolean checkForRAS() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Предупреждение");
-        builder.setMessage("Обнаруженное на устройстве приложение AnyDesk может использоваться хакерами для кражи данных. Продолжить?");
-        builder.setCancelable(false);
-
-        builder.setPositiveButton("Продолжить", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builder.setNegativeButton("Выйти", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finishAffinity();
-                System.exit(0);
-            }
-        });
-
-        List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
-
-        for (int i = 0; i < packs.size(); i++) {
-            PackageInfo p = packs.get(i);
+        List<PackageInfo> installedPacks = getPackageManager().getInstalledPackages(0);
+        for (int i = 0; i < installedPacks.size(); i++) {
+            PackageInfo p = installedPacks.get(i);
             if(Objects.equals(p.packageName, "com.anydesk.anydeskandroid"))
             {
-                AlertDialog alert = builder.create();
-                alert.show();
                 return true;
             }
         }
@@ -96,15 +94,10 @@ public class MainActivity2 extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        if(!checkForRemote()){
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            updateUI(currentUser);
-        }
-
         String ID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         TextView IDview = findViewById(R.id.IDview);
-        IDview.setText("Уникальный идентификатор: " + ID);
+//        IDview.setText("Уникальный идентификатор: " + ID); lab1
 
     }
 
