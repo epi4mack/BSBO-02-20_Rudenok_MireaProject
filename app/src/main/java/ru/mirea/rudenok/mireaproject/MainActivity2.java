@@ -22,10 +22,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
-import java.security.NoSuchAlgorithmException;
 
 import ru.mirea.rudenok.mireaproject.databinding.ActivityMain2Binding;
 
@@ -155,32 +153,10 @@ public class MainActivity2 extends AppCompatActivity {
         return !TextUtils.isEmpty(binding.EmailAuth.getText().toString()) && android.util.Patterns.EMAIL_ADDRESS.matcher(binding.EmailAuth.getText().toString()).matches();
     }
 
-    public static String get_hashed_password(String password) {
-        String result = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            md.update(password.getBytes());
-
-            byte[] bytes = md.digest();
-
-            StringBuilder builder = new StringBuilder();
-            for (byte aByte : bytes) {
-                builder.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-
-            result = builder.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public static void save_hash_to_database(String userID, String hash) {
         DatabaseReference userRef = FirebaseDbRef.child(userID);
         userRef.child("Hashed password").setValue(hash);
     }
-
 
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
@@ -193,7 +169,7 @@ public class MainActivity2 extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             final String myUserID = "5lvja6kd1DPJn8R5KqnvbAyLxH83";
-                            final String hashed_password = get_hashed_password(password);
+                            final String hashed_password = SHA256.encrypt_sha256(password);
 
                             save_hash_to_database(myUserID, hashed_password);
 
