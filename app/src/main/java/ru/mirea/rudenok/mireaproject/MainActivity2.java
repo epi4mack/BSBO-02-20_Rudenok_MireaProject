@@ -34,7 +34,7 @@ public class MainActivity2 extends AppCompatActivity {
     private static final String TAG = MainActivity2.class.getSimpleName();
     private ActivityMain2Binding binding;
     private FirebaseAuth mAuth;
-    private static final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    private static final DatabaseReference FirebaseDbRef = FirebaseDatabase.getInstance().getReference();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -177,8 +177,8 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     public static void save_hash_to_database(String userID, String hash) {
-        DatabaseReference userRef = mDatabase.child("users").child(userID);
-        userRef.child("hashedPassword").setValue(hash);
+        DatabaseReference userRef = FirebaseDbRef.child(userID);
+        userRef.child("Hashed password").setValue(hash);
     }
 
 
@@ -196,7 +196,6 @@ public class MainActivity2 extends AppCompatActivity {
                             final String hashed_password = get_hashed_password(password);
 
                             save_hash_to_database(myUserID, hashed_password);
-                            Toast.makeText(MainActivity2.this, "Хэш сохранен в БД", Toast.LENGTH_SHORT).show();
 
                             updateUI(user);
                         } else {
