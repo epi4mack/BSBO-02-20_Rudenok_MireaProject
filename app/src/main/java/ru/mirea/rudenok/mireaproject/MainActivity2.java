@@ -1,10 +1,8 @@
 package ru.mirea.rudenok.mireaproject;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
@@ -21,8 +19,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
+import java.security.NoSuchAlgorithmException;
 
 import ru.mirea.rudenok.mireaproject.databinding.ActivityMain2Binding;
 
@@ -31,6 +34,7 @@ public class MainActivity2 extends AppCompatActivity {
     private static final String TAG = MainActivity2.class.getSimpleName();
     private ActivityMain2Binding binding;
     private FirebaseAuth mAuth;
+    private static final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +60,7 @@ public class MainActivity2 extends AppCompatActivity {
         });
 
         boolean auto_fill = true;
-        boolean auto_auth = true;
+        boolean auto_auth = false;
 
         if (auto_fill)
         {
@@ -150,6 +154,34 @@ public class MainActivity2 extends AppCompatActivity {
         }
         return !TextUtils.isEmpty(binding.EmailAuth.getText().toString()) && android.util.Patterns.EMAIL_ADDRESS.matcher(binding.EmailAuth.getText().toString()).matches();
     }
+
+    public static String get_hashed_password(String password) {
+        String result = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            md.update(password.getBytes());
+
+            byte[] bytes = md.digest();
+
+            StringBuilder builder = new StringBuilder();
+            for (byte aByte : bytes) {
+                builder.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            }
+
+            result = builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static void save_hash_to_database(String userID, String hash) {
+        DatabaseReference userRef = mDatabase.child("users").child(userID);
+        userRef.child("hashedPassword").setValue(hash);
+    }
+
+
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
         mAuth.signInWithEmailAndPassword(email, password)
@@ -159,6 +191,13 @@ public class MainActivity2 extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            final String myUserID = "5lvja6kd1DPJn8R5KqnvbAyLxH83";
+                            final String hashed_password = get_hashed_password(password);
+
+                            save_hash_to_database(myUserID, hashed_password);
+                            Toast.makeText(MainActivity2.this, "Хэш сохранен в БД", Toast.LENGTH_SHORT).show();
+
                             updateUI(user);
                         } else {
 
