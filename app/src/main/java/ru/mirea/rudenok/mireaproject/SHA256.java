@@ -82,9 +82,6 @@ public class SHA256 {
 
     private static byte[] padding(byte[] input) {
         int padLength = 64 - (input.length % 64);
-        if (padLength == 0) {
-            padLength = 64;
-        }
 
         byte[] padded = new byte[input.length + padLength];
         System.arraycopy(input, 0, padded, 0, input.length);
