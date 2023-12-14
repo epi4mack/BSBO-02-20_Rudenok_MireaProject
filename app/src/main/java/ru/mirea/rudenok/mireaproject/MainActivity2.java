@@ -127,27 +127,25 @@ public class MainActivity2 extends AppCompatActivity {
                 public void onAuthenticationSucceeded(android.hardware.biometrics.BiometricPrompt.AuthenticationResult result) {
                     super.onAuthenticationSucceeded(result);
 
-//                    TextView login = findViewById(R.id.EmailAuth);
-//                    String mail = "test@test.ru";
+                    TextView login = findViewById(R.id.EmailAuth);
+                    String mail = "test@test.ru";
 
+                    if  (!(login.getText().toString().trim().equals(mail)))
+                    {
+                        Toast.makeText(MainActivity2.this, "Не равен", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(MainActivity2.this, MainActivity.class);
+                        startActivity(intent);
 
-
-                    Intent intent = new Intent(MainActivity2.this, MainActivity.class);
-                    startActivity(intent);
-
-                    binding.SignUp.setVisibility(View.GONE);
-                    binding.EmailAuth.setVisibility(View.GONE);
-                    binding.PasswordAuth.setVisibility(View.GONE);
-                    binding.SignIn.setVisibility(View.GONE);
-                    binding.LabelAuth.setVisibility(View.GONE);
-                    binding.textView9.setVisibility(View.GONE);
-
-
-
-//                    FirebaseUser currentUser = mAuth.getCurrentUser();
-//                    updateUI(currentUser);
-//                    Toast.makeText(MainActivity2.this, currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
-//                    signIn(binding.EmailAuth.getText().toString(), "123456");
+                        binding.SignUp.setVisibility(View.GONE);
+                        binding.EmailAuth.setVisibility(View.GONE);
+                        binding.PasswordAuth.setVisibility(View.GONE);
+                        binding.SignIn.setVisibility(View.GONE);
+                        binding.LabelAuth.setVisibility(View.GONE);
+                        binding.textView9.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override
@@ -176,7 +174,6 @@ public class MainActivity2 extends AppCompatActivity {
                     return;
                 }
 
-                signIn(binding.EmailAuth.getText().toString(), binding.PasswordAuth.getText().toString());
             }
         });
 
