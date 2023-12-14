@@ -1,17 +1,23 @@
 package ru.mirea.rudenok.mireaproject;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,16 +30,28 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+
+import androidx.annotation.RequiresApi;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import ru.mirea.rudenok.mireaproject.databinding.ActivityMain2Binding;
 
 public class MainActivity2 extends AppCompatActivity {
+    android.hardware.biometrics.BiometricPrompt biometricPrompt;
+    BiometricPrompt.PromptInfo promptInfo;
+    ConstraintLayout mMainLayout;
 
     private static final String TAG = MainActivity2.class.getSimpleName();
     private ActivityMain2Binding binding;
     private FirebaseAuth mAuth;
     private static final DatabaseReference FirebaseDbRef = FirebaseDatabase.getInstance().getReference();
+    private android.hardware.biometrics.BiometricPrompt.AuthenticationCallback authenticationCallback;
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,19 +63,124 @@ public class MainActivity2 extends AppCompatActivity {
 //            System.exit(0);
 //        } lab2
 
-
         binding = ActivityMain2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
 
+        // lab 4
+
+        String message = "";
+
+        mMainLayout = findViewById(R.id.login);
+
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate())
+        {
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                message = "На устройстве нет датчика отпечатка пальца.";
+                break;
+
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                message = "Датчик отпечатка пальца недоступен. Попробуйте снова позже.";
+                break;
+
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                message = "На устройстве нет сохраненных отпечатков.";
+                break;
+        }
+
+        final String msg = message;
+        binding.fingerprint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (msg != "")
+                {
+                    Toast.makeText(MainActivity2.this, msg, Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    TextView login = findViewById(R.id.EmailAuth);
+                    Integer l = login.getText().toString().trim().length();
+
+                    if (l == 0)
+                    {
+                        Toast.makeText(MainActivity2.this, "Введите электронную почту!", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        startFingerprintAuth();
+                    }
+
+                }
+            }
+        });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            authenticationCallback = new android.hardware.biometrics.BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationError(int errorCode, CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    Toast.makeText(MainActivity2.this, "Ошибка при аутентификации: " + errString, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(android.hardware.biometrics.BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+
+//                    TextView login = findViewById(R.id.EmailAuth);
+//                    String mail = "test@test.ru";
+
+
+
+                    Intent intent = new Intent(MainActivity2.this, MainActivity.class);
+                    startActivity(intent);
+
+                    binding.SignUp.setVisibility(View.GONE);
+                    binding.EmailAuth.setVisibility(View.GONE);
+                    binding.PasswordAuth.setVisibility(View.GONE);
+                    binding.SignIn.setVisibility(View.GONE);
+                    binding.LabelAuth.setVisibility(View.GONE);
+                    binding.textView9.setVisibility(View.GONE);
+
+
+
+//                    FirebaseUser currentUser = mAuth.getCurrentUser();
+//                    updateUI(currentUser);
+//                    Toast.makeText(MainActivity2.this, currentUser.getDisplayName(), Toast.LENGTH_SHORT).show();
+//                    signIn(binding.EmailAuth.getText().toString(), "123456");
+                }
+
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+                    Toast.makeText(MainActivity2.this, "Неудачная аутентификация", Toast.LENGTH_SHORT).show();
+                }
+            };
+        }
+
+        // lab 4
+
         binding.SignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                TextView login = findViewById(R.id.EmailAuth);
+                TextView pass = findViewById(R.id.PasswordAuth);
+
+                Integer l1 = login.getText().toString().trim().length();
+                Integer l2 = pass.getText().toString().trim().length();
+
+                if ((l1 == 0) || (l2 == 0))
+                {
+                    Toast.makeText(MainActivity2.this, "Заполните оба поля!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 signIn(binding.EmailAuth.getText().toString(), binding.PasswordAuth.getText().toString());
             }
         });
 
-        boolean auto_fill = true;
+        boolean auto_fill = false;
         boolean auto_auth = false;
 
         if (auto_fill)
@@ -77,6 +200,28 @@ public class MainActivity2 extends AppCompatActivity {
                 createAccount(binding.EmailAuth.getText().toString(), binding.PasswordAuth.getText().toString());
             }
         });
+    }
+
+    private void startFingerprintAuth() {
+        CancellationSignal cancellationSignal = new CancellationSignal();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            biometricPrompt = new android.hardware.biometrics.BiometricPrompt.Builder(this)
+                    .setTitle("Fingerprint authentication")
+                    .setSubtitle("Place your finger on the fingerprint sensor")
+                    .setDescription("Touch the fingerprint sensor to verify your identity.")
+                    .setNegativeButton("Cancel", getMainExecutor(), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(MainActivity2.this, "Authentication cancelled", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .build();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            biometricPrompt.authenticate(cancellationSignal, getMainExecutor(), authenticationCallback);
+        }
     }
 
     private boolean checkForRAS() {
@@ -159,7 +304,6 @@ public class MainActivity2 extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
-        Log.d(TAG, "signIn:" + email);
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -188,4 +332,6 @@ public class MainActivity2 extends AppCompatActivity {
         mAuth.signOut();
         updateUI(null);
     }
+
+
 }

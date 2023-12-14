@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity2">
@@ -80,7 +81,7 @@
         android:layout_marginStart="110dp"
         android:layout_marginTop="49dp"
         android:layout_marginEnd="138dp"
-        android:layout_marginBottom="105dp"
+        android:layout_marginBottom="50dp"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -90,5 +91,22 @@
         app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SignUp"
-        app:layout_constraintVertical_bias="0.833" />
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/fingerprint"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="184dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="185dp"
+        android:layout_marginBottom="25dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/IDview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SignUp"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="?android:attr/fingerprintAuthDrawable" />
 </androidx.constraintlayout.widget.ConstraintLayout>
