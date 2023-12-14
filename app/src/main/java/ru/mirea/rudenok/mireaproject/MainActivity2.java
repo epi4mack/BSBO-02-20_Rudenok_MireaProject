@@ -154,6 +154,7 @@ public class MainActivity2 extends AppCompatActivity {
                     Toast.makeText(MainActivity2.this, "Неудачная аутентификация", Toast.LENGTH_SHORT).show();
                 }
             };
+
         }
 
         // lab 4
