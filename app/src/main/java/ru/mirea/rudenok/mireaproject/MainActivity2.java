@@ -1,6 +1,5 @@
 package ru.mirea.rudenok.mireaproject;
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,10 +13,8 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,13 +27,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Executor;
 
 import androidx.annotation.RequiresApi;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import ru.mirea.rudenok.mireaproject.databinding.ActivityMain2Binding;
 
@@ -120,7 +115,6 @@ public class MainActivity2 extends AppCompatActivity {
                 @Override
                 public void onAuthenticationError(int errorCode, CharSequence errString) {
                     super.onAuthenticationError(errorCode, errString);
-                    Toast.makeText(MainActivity2.this, "Ошибка при аутентификации: " + errString, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -128,12 +122,10 @@ public class MainActivity2 extends AppCompatActivity {
                     super.onAuthenticationSucceeded(result);
 
                     TextView login = findViewById(R.id.EmailAuth);
-                    String mail = "test@test.ru";
 
-
-                    if  (!(login.getText().toString().trim().equals(mail)))
+                    if  (!checkEmail(login.getText().toString()))
                     {
-                        Toast.makeText(MainActivity2.this, "Не равен", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity2.this, "Неверный адрес электронной почты.", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -146,6 +138,9 @@ public class MainActivity2 extends AppCompatActivity {
                         binding.SignIn.setVisibility(View.GONE);
                         binding.LabelAuth.setVisibility(View.GONE);
                         binding.textView9.setVisibility(View.GONE);
+                        binding.fingerprint.setVisibility(View.GONE);
+
+                        Toast.makeText(MainActivity2.this, "Вход выполнен успешно.", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -176,6 +171,7 @@ public class MainActivity2 extends AppCompatActivity {
                     return;
                 }
 
+                signIn(login.getText().toString(), pass.getText().toString());
             }
         });
 
@@ -203,16 +199,16 @@ public class MainActivity2 extends AppCompatActivity {
 
     private void startFingerprintAuth() {
         CancellationSignal cancellationSignal = new CancellationSignal();
+        TextView login = findViewById(R.id.EmailAuth);
+        String accountName = login.getText().toString();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             biometricPrompt = new android.hardware.biometrics.BiometricPrompt.Builder(this)
-                    .setTitle("Fingerprint authentication")
-                    .setSubtitle("Place your finger on the fingerprint sensor")
-                    .setDescription("Touch the fingerprint sensor to verify your identity.")
-                    .setNegativeButton("Cancel", getMainExecutor(), new DialogInterface.OnClickListener() {
+                    .setTitle("Вход в аккаунт '" + accountName + "'")
+                    .setNegativeButton("Отмена", getMainExecutor(), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(MainActivity2.this, "Authentication cancelled", Toast.LENGTH_SHORT).show();
+
                         }
                     })
                     .build();
@@ -259,12 +255,14 @@ public class MainActivity2 extends AppCompatActivity {
             binding.SignIn.setVisibility(View.GONE);
             binding.LabelAuth.setVisibility(View.GONE);
             binding.textView9.setVisibility(View.GONE);
+            binding.fingerprint.setVisibility(View.GONE);
 
         } else {
             binding.SignUp.setVisibility(View.VISIBLE);
             binding.EmailAuth.setVisibility(View.VISIBLE);
             binding.PasswordAuth.setVisibility(View.VISIBLE);
             binding.SignIn.setVisibility(View.VISIBLE);
+            binding.fingerprint.setVisibility(View.VISIBLE);
         }
     }
     private void createAccount(String email, String password) {
@@ -283,7 +281,7 @@ public class MainActivity2 extends AppCompatActivity {
                             updateUI(user);
                         } else {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity2.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity2.this, "Неудачная аутентификация.", Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
@@ -300,9 +298,12 @@ public class MainActivity2 extends AppCompatActivity {
     public static void save_hash_to_database(String userID, String hash) {
         DatabaseReference userRef = FirebaseDbRef.child(userID);
         userRef.child("Hashed password").setValue(hash);
+
     }
 
     private void signIn(String email, String password) {
+        TextView login = findViewById(R.id.EmailAuth);
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -319,9 +320,7 @@ public class MainActivity2 extends AppCompatActivity {
                             updateUI(user);
                         } else {
 
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-
-                            Toast.makeText(MainActivity2.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity2.this, "Неудачная аутентификация.", Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
@@ -332,5 +331,8 @@ public class MainActivity2 extends AppCompatActivity {
         updateUI(null);
     }
 
-
+    private boolean checkEmail(String email)
+    {
+        return email.trim().equals("test@test.ru");
+    }
 }
