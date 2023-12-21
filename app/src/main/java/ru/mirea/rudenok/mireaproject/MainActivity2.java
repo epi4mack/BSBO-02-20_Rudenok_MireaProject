@@ -130,6 +130,7 @@ public class MainActivity2 extends AppCompatActivity {
                     TextView login = findViewById(R.id.EmailAuth);
                     String mail = "test@test.ru";
 
+
                     if  (!(login.getText().toString().trim().equals(mail)))
                     {
                         Toast.makeText(MainActivity2.this, "Не равен", Toast.LENGTH_SHORT).show();
